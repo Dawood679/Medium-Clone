@@ -27,11 +27,11 @@ const Update = () => {
 
   // Set initial title and content once blog is loaded or changes
   useEffect(() => {
-    if (blog) {
-      setTitle(blog.title);
-      setContent(blog.content);
+    if (blogs.title) {
+      setTitle(blogs.title);
+      setContent(blogs.content);
     }
-  }, [blog]);
+  }, [blogs]);
 
   if (loading) {
     return <CircularIndeterminate />;
@@ -44,8 +44,8 @@ const Update = () => {
       .put(
         `${BECKEND_URL}/api/v1/post/${id}`,
         {
-          title: title || blog?.title,
-          content: content || blog?.content,
+          title: title || blogs?.title,
+          content: content || blogs?.content,
           id: id,
         },
         {
@@ -68,7 +68,8 @@ const Update = () => {
       <Appbar />
       <div className="max-w-4xl mx-auto p-6 mt-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Update post</h1>
-
+          
+        
         <input
           type="text"
           placeholder="Title"
