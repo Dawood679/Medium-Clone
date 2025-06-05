@@ -30,23 +30,25 @@ const BlogsCard = ({
   return (
     <Link to={`/blog/${id}`}>
       <div className="px-[15vw] pt-10 py-3">
-        <div className="border-b border-slate-400">
-          <div className="flex flex-cols items-center gap-2">
-            <Avator author_avatar={author_avatar} />
-            <h3 className="font-bold">{author_avatar}</h3>
-            <div className="text-md font-thin">{postDate}</div>
-          </div>
+        <div className="border border-gray-300 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="border-b border-slate-400 p-4">
+            <div className="flex flex-cols items-center gap-2">
+              <Avator author_avatar={author_avatar} />
+              <h3 className="font-bold">{author_avatar}</h3>
+              <div className="text-md font-thin">{postDate}</div>
+            </div>
 
-          <div className="pl-2 pt-5">
-            <div className="text-xl font-bold">{title}</div>
-            <div
-              ref={contentRef}
-              dangerouslySetInnerHTML={{ __html: content }}
-              className="text-gray-800 whitespace-pre-wrap mb-8"
-              style={{ color: "#1f2937" }}
-            />
-            <div className="font-thin">
-              {Math.ceil(content.length / 100)} minute(s)
+            <div className="pl-2 pt-5 w-full">
+              <div className="text-xl font-bold">{title}</div>
+              <div
+                ref={contentRef}
+                dangerouslySetInnerHTML={{ __html: content }}
+                className="text-gray-800 whitespace-nowrap mb-8"
+                style={{ color: "#1f2937" }}
+              />
+              <div className="font-thin whitespace-nowrap">
+                {Math.ceil(content.length / 100)} minute(s)
+              </div>
             </div>
           </div>
         </div>

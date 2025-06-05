@@ -42,7 +42,7 @@ const Publish = () => {
         },
         {
           headers: {
-            Authorization: token ? `Bearer ${token}` : "",
+            Authorization: token ? `${token}` : "",
           },
         }
       )

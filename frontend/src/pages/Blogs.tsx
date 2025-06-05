@@ -18,7 +18,7 @@ export const Blogs = () => {
     <div className="min-h-screen bg-[#fefaf6] font-serif">
       <Appbar />
 
-      <main className="max-w-15xl mx-auto px-4 py-8 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+      <main className="max-w-5xl mx-auto px-4 py-8  flex flex-col">
         {blogs.map((post: any) => (
           <BlogsCard
             key={post.id}
