@@ -27,7 +27,9 @@ const Update = () => {
   // Set initial title and content once blog is loaded or changes
   useEffect(() => {
     if (blogs) {
+      //@ts-expect-error
       setTitle(blogs.title);
+      //@ts-expect-error
       setContent(blogs.content);
     }
   }, [blogs]);
@@ -43,7 +45,9 @@ const Update = () => {
       .put(
         `${BECKEND_URL}/api/v1/post/${id}`,
         {
+          //@ts-expect-error
           title: title || blogs?.title,
+          //@ts-expect-error
           content: content || blogs?.content,
           id: id,
         },
@@ -67,8 +71,7 @@ const Update = () => {
       <Appbar />
       <div className="max-w-4xl mx-auto p-6 mt-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Update post</h1>
-        {blogs.title}
-        {blogs.content}
+        
         <input
           type="text"
           placeholder="Title"
