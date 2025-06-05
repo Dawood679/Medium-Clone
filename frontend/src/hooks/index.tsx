@@ -39,11 +39,21 @@ const useBlogs = () => {
 
 export default useBlogs;
 
-export const useBlog = ({ id }: { id: string }) => {
-  const [loading, setloading] = useState(true);
-  const [blogs, setblogs] = useState([]);
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  published: boolean;
+  createdAt: string;
+  author: {
+    name: string;
+  };
+}
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+export const useBlog = ({ id }: { id: string }) => {
+  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState<Blog | null>(null); // ✅ initialize as null
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -54,19 +64,18 @@ export const useBlog = ({ id }: { id: string }) => {
         },
       })
       .then((response) => {
-        const posts = response.data.post1;
-
-        setblogs(posts);
-        setloading(false);
+        const post = response.data.post1; // ✅ no `.post1` anymore
+        setBlogs(post);
+        setLoading(false);
       })
       .catch((error) => {
-        setloading(false);
+        setLoading(false);
         console.error(
-          "Error fetching blogs:",
+          "Error fetching blog:",
           error.response?.data || error.message
         );
       });
-  }, []);
+  }, [id]); // ✅ include `id` in dependencies
 
   return {
     loading,

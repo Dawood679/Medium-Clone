@@ -8,7 +8,7 @@ import { CalendarDays, PenLine, Trash2 } from "lucide-react";
 import axios from "axios";
 
 type BlogType = {
-  id: number;
+  id: number | string;
   title: string;
   content: string;
   createdAt: string;

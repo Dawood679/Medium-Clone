@@ -1,77 +1,76 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Appbar from "../Components/Appbar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import CircularIndeterminate from "../Components/config";
 import { BECKEND_URL } from "../Components/config";
-import { useNavigate, useParams } from "react-router-dom";
 import { useBlog } from "../hooks";
 
+// Blog type definition
 interface Blog {
-  id: string;
   title: string;
   content: string;
+  id: string;
 }
 
 const Update = () => {
   const { id } = useParams<{ id: string }>();
-  const { loading, blogs } : { loading: boolean; blogs: Blog[] } = useBlog({ id: id || "" });
+  const navigate = useNavigate();
+
+  const { loading, blogs }: { loading: boolean; blogs: Blog | null } = useBlog({ id: id || "" });
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const navigate = useNavigate();
 
- 
-
-  // Set initial title and content once blog is loaded or changes
+  // Set initial values when blog is fetched
   useEffect(() => {
-    if (blogs) {
-      
-      setTitle(blogs[0].title);
-      
-      setContent(blogs[0].content);
-    }
-  }, [blogs]);
+  if (blogs) {
+    setTitle((prev) => prev || blogs.title);
+    setContent((prev) => prev || blogs.content);
+  }
+}, [blogs]);
 
-  if (loading) {
+
+  // Show loader if still fetching or blogs is null
+  if (loading || !blogs) {
     return <CircularIndeterminate />;
   }
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     const token = localStorage.getItem("token");
 
-    axios
-      .put(
+    try {
+      const response = await axios.put(
         `${BECKEND_URL}/api/v1/post/${id}`,
         {
-          
-          title: title || blogs[0]?.title,
-         
-          content: content || blogs[0]?.content,
-          id: id,
+          title,
+          content,
+          id,
         },
         {
           headers: {
             Authorization: `${token}`,
           },
         }
-      )
-      .then((response) => {
-        console.log("Post updated:", response.data);
-        navigate(`/blog/${id}`);
-      })
-      .catch((error) => {
-        console.error("Error updating post:", error.response?.data || error.message);
-      });
+      );
+
+      console.log("Post updated:", response.data);
+      navigate(`/blog/${id}`);
+    } catch (error: any) {
+      console.error("Error updating post:", error.response?.data || error.message);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Appbar />
+
       <div className="max-w-4xl mx-auto p-6 mt-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Update post</h1>
-        
+    {blogs.title}
+    {blogs.content}
         <input
           type="text"
           placeholder="Title"
