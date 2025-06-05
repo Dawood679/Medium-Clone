@@ -87,20 +87,40 @@ postRouter.put("/:id", async (c) => {
   }
 
   try {
-    let userId = c.get("userId")
-    
-    let post1 = await prisma.post.update({
-      where: {
-        id: body.id,
-      },
-      data: {
-        title: body.title,
-        content: body.content,
-        
-      },
-    });
+   
 
-    return c.json({ post1 });
+    let userId = c.get("userId")
+    let user1 = await prisma.post.findFirst({
+      where:{
+        id:body.id
+      },
+      select:{
+        author_id:true
+      }
+    })
+
+
+    
+    let final = user1?.author_id
+    
+    if(final === userId){
+      let post1 = await prisma.post.update({
+        where: {
+          id: body.id,
+        },
+        data: {
+          title: body.title,
+          content: body.content,
+          
+        },
+      });
+  
+      return c.json({ post1 });
+    }else{
+      return c.text("you are not the owner of this post")
+    }
+    
+    
   } catch (e) {
     c.status(411);
 
