@@ -27,10 +27,10 @@ const Update = () => {
   // Set initial title and content once blog is loaded or changes
   useEffect(() => {
     if (blogs) {
-      //@ts-expect-error
-      setTitle(blogs.title);
-      //@ts-expect-error
-      setContent(blogs.content);
+      
+      setTitle(blogs[0].title);
+      
+      setContent(blogs[0].content);
     }
   }, [blogs]);
 
@@ -45,10 +45,10 @@ const Update = () => {
       .put(
         `${BECKEND_URL}/api/v1/post/${id}`,
         {
-          //@ts-expect-error
-          title: title || blogs?.title,
-          //@ts-expect-error
-          content: content || blogs?.content,
+          
+          title: title || blogs[0]?.title,
+         
+          content: content || blogs[0]?.content,
           id: id,
         },
         {
