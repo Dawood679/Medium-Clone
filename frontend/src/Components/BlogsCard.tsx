@@ -1,59 +1,52 @@
-
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-interface bloginterface {
+interface BlogInterface {
   id: string;
   title: string;
   content: string;
-  
-  author_avatar: string;
-  createdAt:string
-
+  author_avatar: string; // Can be name or avatar URL
+  createdAt: string;
 }
 
 const BlogsCard = ({
   id,
   title,
   content,
-  
   author_avatar,
   createdAt,
-}: bloginterface) => {
+}: BlogInterface) => {
   const postDate = new Date(createdAt).toLocaleDateString();
-console.error(createdAt)
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const links = contentRef.current?.querySelectorAll("a");
+    links?.forEach((link) => {
+      (link as HTMLAnchorElement).style.color = "#2563eb";
+      (link as HTMLAnchorElement).style.textDecoration = "underline";
+    });
+  }, []);
+
   return (
     <Link to={`/blog/${id}`}>
       <div className="px-[15vw] pt-10 py-3">
         <div className="border-b border-slate-400">
-          <div className="flex flex-cols items-center gap-2 ">
-            <div>
-              <Avator author_avatar={author_avatar}></Avator>
-            </div>
-            <div>
-              <h3 className="font-bold">{author_avatar}</h3>
-            </div>
+          <div className="flex flex-cols items-center gap-2">
+            <Avator author_avatar={author_avatar} />
+            <h3 className="font-bold">{author_avatar}</h3>
             <div className="text-md font-thin">{postDate}</div>
           </div>
+
           <div className="pl-2 pt-5">
             <div className="text-xl font-bold">{title}</div>
             <div
+              ref={contentRef}
               dangerouslySetInnerHTML={{ __html: content }}
               className="text-gray-800 whitespace-pre-wrap mb-8"
-              style={{
-                color: "#1f2937", // gray-800
-              }}
-              onLoad={(e) => {
-                const links = e.currentTarget.querySelectorAll("a");
-                links.forEach((link) => {
-                  link.style.color = "#2563eb"; // blue-600
-                  link.style.textDecoration = "underline";
-                });
-              }}
+              style={{ color: "#1f2937" }}
             />
-
-            <div className="font-thin ">
-              {Math.ceil(content.length / 100)} mintes(s)
+            <div className="font-thin">
+              {Math.ceil(content.length / 100)} minute(s)
             </div>
           </div>
         </div>
@@ -63,17 +56,28 @@ console.error(createdAt)
 };
 
 export default BlogsCard;
-interface avator {
+
+interface AvatorProps {
   author_avatar: string;
 }
 
-export function Avator({ author_avatar }: avator) {
-  const [isHovered,sethovered] = useState(false)
+export function Avator({ author_avatar }: AvatorProps) {
+  const [isHovered, setHovered] = useState(false);
+  const initials = author_avatar?.charAt(0)?.toUpperCase() || "A";
+
   return (
-    <div className="">
-      <div onMouseEnter={()=>sethovered(true)} onMouseLeave={()=>sethovered(false)} className="relative inline-flex items-center justify-center w-10 border h-10 overflow-hidden hover:bg-black bg-gray-100 rounded-full dark:bg-gray-600 cursor-pointer">
-        <span className={`font-medium text-gray-600 dark:text-gray-300 ${isHovered ? "text-white":""}`}>
-          {author_avatar[0]}
+    <div>
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full border dark:bg-gray-600 hover:bg-black cursor-pointer"
+      >
+        <span
+          className={`font-medium text-gray-600 dark:text-gray-300 ${
+            isHovered ? "text-white" : ""
+          }`}
+        >
+          {initials}
         </span>
       </div>
     </div>

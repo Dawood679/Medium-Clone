@@ -18,17 +18,40 @@ type BlogType = {
   };
 };
 
-export const Blog = () => {
+const BlogContent = styled.div`
+  a {
+    color: #2563eb;
+    cursor: pointer;
+    &:hover {
+      color: #1d4ed8;
+    }
+  }
+  color: #1f2937;
+  white-space: pre-wrap;
+  margin-bottom: 2rem;
+`;
+
+const Blog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { loading, blogs } = useBlog({ id: id || "" });
 
-  // ✅ Manually tell TypeScript: "blogs is of type BlogType"
-  const blog = blogs as unknown as BlogType;
+  const blog = Array.isArray(blogs) ? blogs[0] : blogs as BlogType;
 
   if (loading) {
     return <CircularIndeterminate />;
+  }
+
+  if (!blog) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Appbar />
+        <div className="max-w-4xl mx-auto py-16 text-center text-gray-700">
+          <h2 className="text-xl font-semibold">Blog not found.</h2>
+        </div>
+      </div>
+    );
   }
 
   const readingTime = `${Math.ceil(blog.content.length / 100)} Minute(s) read`;
@@ -37,31 +60,22 @@ export const Blog = () => {
   const handleDelete = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
     const token = localStorage.getItem("token");
-    if (confirmDelete) {
+    if (confirmDelete && token) {
       axios
         .delete(`${BECKEND_URL}/api/v1/post/${id}`, {
           headers: {
-            Authorization: `${token}`,
+            Authorization: token,
           },
         })
         .then(() => {
           navigate("/blogs");
+        })
+        .catch((err) => {
+          alert("Error deleting blog.");
+          console.error(err);
         });
     }
   };
-
-  const BlogContent = styled.div`
-    a {
-      color: #2563eb;
-      cursor: pointer;
-      &:hover {
-        color: #1d4ed8;
-      }
-    }
-    color: #1f2937;
-    white-space: pre-wrap;
-    margin-bottom: 2rem;
-  `;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -71,7 +85,6 @@ export const Blog = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Left Side: Blog Title & Content */}
           <div className="md:col-span-2 bg-white p-8 rounded-xl shadow-md border border-gray-200 relative">
-            {/* Action Buttons: Edit and Delete */}
             <div className="absolute top-4 right-4 flex gap-3">
               <Link to={`/update/${id}`}>
                 <PenLine width={20} cursor={"Pointer"} />
@@ -90,19 +103,13 @@ export const Blog = () => {
               {blog.title}
             </h1>
 
-            {/* Date */}
             <div className="flex items-center text-sm text-gray-500 mb-6">
               <CalendarDays className="w-4 h-4 mr-2" />
               <span>Posted on {postDate}</span>
             </div>
 
-            {/* Content */}
-            <BlogContent
-              dangerouslySetInnerHTML={{ __html: blog.content }}
-              className="text-gray-800 whitespace-pre-wrap mb-8 cursor-pointer"
-            />
+            <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
 
-            {/* Reading Time */}
             <div className="border-t pt-4 mt-6">
               <p className="text-sm text-gray-500 italic">{readingTime}</p>
             </div>

@@ -22,9 +22,10 @@ const Update = () => {
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
-  // Find the blog by id from blogs array
+  // Find the blog by id from blogs array safely
   const blog = Array.isArray(blogs) ? blogs.find((b) => b.id === id) : undefined;
 
+  // Set initial title and content once blog is loaded or changes
   useEffect(() => {
     if (blog) {
       setTitle(blog.title);
@@ -65,7 +66,7 @@ const Update = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Appbar />
-      <div className="max-w-4xl mx-auto p-6 mt-10 ">
+      <div className="max-w-4xl mx-auto p-6 mt-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Update post</h1>
 
         <input
