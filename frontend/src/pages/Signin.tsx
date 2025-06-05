@@ -1,4 +1,4 @@
-import React from 'react'
+
 import Signupinputs from '../Components/Signupinputs'
 import Quotes from '../Components/Quotes'
 

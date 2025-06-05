@@ -1,29 +1,41 @@
-import React from "react";
 import styled from "styled-components";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Appbar from "../Components/Appbar";
 import { useBlog } from "../hooks";
 import CircularIndeterminate, { BECKEND_URL } from "../Components/config";
 import { Avator } from "./BlogsCard";
-import { CalendarDays, PenLine, Pointer, Trash2 } from "lucide-react";
+import { CalendarDays, PenLine, Trash2 } from "lucide-react";
 import axios from "axios";
+
+type BlogType = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  author?: {
+    name?: string;
+    avatarUrl?: string;
+  };
+};
 
 export const Blog = () => {
   const { id } = useParams();
-  const { loading, blogs } = useBlog({ id: id || "" });
   const navigate = useNavigate();
+
+  const { loading, blogs } = useBlog({ id: id || "" });
+
+  // ✅ Manually tell TypeScript: "blogs is of type BlogType"
+  const blog = blogs as unknown as BlogType;
 
   if (loading) {
     return <CircularIndeterminate />;
   }
 
-  const readingTime = `${Math.ceil(blogs.content.length / 100)} Minute(s) read`;
-  const postDate = new Date(blogs.createdAt).toLocaleDateString();
+  const readingTime = `${Math.ceil(blog.content.length / 100)} Minute(s) read`;
+  const postDate = new Date(blog.createdAt).toLocaleDateString();
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
+    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
     const token = localStorage.getItem("token");
     if (confirmDelete) {
       axios
@@ -61,10 +73,10 @@ export const Blog = () => {
           <div className="md:col-span-2 bg-white p-8 rounded-xl shadow-md border border-gray-200 relative">
             {/* Action Buttons: Edit and Delete */}
             <div className="absolute top-4 right-4 flex gap-3">
-              {/* Update Button */}
-              <Link to={`/update/${id}`}><PenLine width={20} cursor={"Pointer"} /></Link>
+              <Link to={`/update/${id}`}>
+                <PenLine width={20} cursor={"Pointer"} />
+              </Link>
 
-              {/* Delete Button */}
               <button
                 className="text-gray-400 hover:text-red-600 cursor-pointer"
                 onClick={handleDelete}
@@ -75,7 +87,7 @@ export const Blog = () => {
             </div>
 
             <h1 className="text-4xl font-bold text-gray-900 mb-2 leading-tight">
-              {blogs.title}
+              {blog.title}
             </h1>
 
             {/* Date */}
@@ -86,7 +98,7 @@ export const Blog = () => {
 
             {/* Content */}
             <BlogContent
-              dangerouslySetInnerHTML={{ __html: blogs.content }}
+              dangerouslySetInnerHTML={{ __html: blog.content }}
               className="text-gray-800 whitespace-pre-wrap mb-8 cursor-pointer"
             />
 
@@ -101,11 +113,11 @@ export const Blog = () => {
             <div className="flex flex-col items-center text-center">
               <Avator
                 author_avatar={
-                  blogs.author?.avatarUrl || blogs.author?.name || "A"
+                  blog.author?.avatarUrl || blog.author?.name || "A"
                 }
               />
               <div className="mt-4 text-gray-800 text-xl font-semibold">
-                {blogs.author?.name || "Unknown Author"}
+                {blog.author?.name || "Unknown Author"}
               </div>
               <p className="text-sm text-gray-500 mt-1">Blog Author</p>
             </div>

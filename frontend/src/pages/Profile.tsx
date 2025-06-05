@@ -1,10 +1,9 @@
-import React from 'react';
 import Appbar from '../Components/Appbar';
 import { userdata2 } from '../hooks';
 import { Avator } from '../Components/BlogsCard';
 
 const Profile = () => {
-  const { blogs } = userdata2();
+  const { blogs } = userdata2() as { blogs: { name?: string; email?: string } };
 
   return (
     <div className="min-h-screen bg-gray-50">

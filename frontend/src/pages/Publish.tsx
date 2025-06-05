@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import Appbar from "../Components/Appbar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -12,33 +12,30 @@ const Publish = () => {
   const navigate = useNavigate();
 
   const handlePublish = () => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  
-
-  axios
-    .post(
-      `${BECKEND_URL}/api/v1/post`,
-      {
-        title,
-        content: content,
+    axios
+      .post(
+        `${BECKEND_URL}/api/v1/post`,
+        {
+          title,
+          content,
           // send only the text, no html tags
-      },
-      {
-        headers: {
-          Authorization: `${token}`,
         },
-      }
-    )
-    .then((response) => {
-      console.log("Post published:", response.data);
-      navigate("/blogs");
-    })
-    .catch((error) => {
-      console.error("Error publishing post:", error.response?.data || error.message);
-    });
-};
-
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Post published:", response.data);
+        navigate("/blogs");
+      })
+      .catch((error) => {
+        console.error("Error publishing post:", error.response?.data || error.message);
+      });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -77,7 +74,7 @@ const Publish = () => {
       </div>
 
       {/* Inline CSS to expand editable area inside ReactQuill */}
-      <style jsx>{`
+      <style>{`
         .ql-editor {
           min-height: 350px !important;
           overflow-y: auto;

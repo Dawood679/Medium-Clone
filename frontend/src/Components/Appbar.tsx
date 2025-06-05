@@ -48,7 +48,7 @@ const Appbar = () => {
           </div>
           <div className="relative">
             <button onClick={toggleDropdown} className="cursor-pointer">
-              <Avator author_avatar={blogs} />
+              <Avator author_avatar={blogs as unknown as string} />
             </button>
 
             {isDropdownOpen && (

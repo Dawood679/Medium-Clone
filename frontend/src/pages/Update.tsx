@@ -3,23 +3,39 @@ import Appbar from "../Components/Appbar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
-import CircularIndeterminate, { BECKEND_URL } from "../Components/config";
+import CircularIndeterminate from "../Components/config";
+import { BECKEND_URL } from "../Components/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBlog } from "../hooks";
 
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+}
+
 const Update = () => {
-  const { id } = useParams();
-  const { loading, blogs } = useBlog({ id: id || "" });
+  const { id } = useParams<{ id: string }>();
+  const { loading, blogs } : { loading: boolean; blogs: Blog[] } = useBlog({ id: id || "" });
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
+  // Find the blog by id from blogs array
+  const blog = Array.isArray(blogs) ? blogs.find((b) => b.id === id) : undefined;
+
+  useEffect(() => {
+    if (blog) {
+      setTitle(blog.title);
+      setContent(blog.content);
+    }
+  }, [blog]);
+
   if (loading) {
     return <CircularIndeterminate />;
   }
 
-  
   const handlePublish = () => {
     const token = localStorage.getItem("token");
 
@@ -27,10 +43,9 @@ const Update = () => {
       .put(
         `${BECKEND_URL}/api/v1/post/${id}`,
         {
-          title:title ||blogs.title,
-          content: content || blogs.content,
-          id:id
-          
+          title: title || blog?.title,
+          content: content || blog?.content,
+          id: id,
         },
         {
           headers: {
@@ -39,14 +54,11 @@ const Update = () => {
         }
       )
       .then((response) => {
-        console.log("Post published:", response.data);
+        console.log("Post updated:", response.data);
         navigate(`/blog/${id}`);
       })
       .catch((error) => {
-        console.error(
-          "Error publishing post:",
-          error.response?.data || error.message
-        );
+        console.error("Error updating post:", error.response?.data || error.message);
       });
   };
 
@@ -54,12 +66,8 @@ const Update = () => {
     <div className="min-h-screen bg-gray-50">
       <Appbar />
       <div className="max-w-4xl mx-auto p-6 mt-10 ">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">
-          Write a New post
-        </h1>
-        {title}
-        {content}
-        {/* Title Input */}
+        <h1 className="text-2xl font-bold mb-6 text-gray-800">Update post</h1>
+
         <input
           type="text"
           placeholder="Title"
@@ -68,7 +76,6 @@ const Update = () => {
           className="w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        {/* Rich Text Editor */}
         <ReactQuill
           theme="snow"
           value={content}
@@ -78,21 +85,17 @@ const Update = () => {
           style={{ height: "400px", marginBottom: "24px" }}
         />
 
-        {/* Publish Button */}
         <div className="pt-10">
           <button
             onClick={handlePublish}
-            
-            className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md "
-            }`}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md"
           >
-            Publish post
+            Update post
           </button>
         </div>
       </div>
 
-      {/* Inline CSS to expand editable area inside ReactQuill */}
-      <style jsx>{`
+      <style>{`
         .ql-editor {
           min-height: 350px !important;
           overflow-y: auto;

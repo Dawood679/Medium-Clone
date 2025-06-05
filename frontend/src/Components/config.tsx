@@ -1,7 +1,6 @@
 export const BECKEND_URL = "https://week-13.dawoodalam057.workers.dev"
 
 
-import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 
